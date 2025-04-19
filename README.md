@@ -8,6 +8,32 @@ udp.Listener -> udp.Mux -> InputQueue -> Simulation -> SnapshotQueue
                  ack
 ```
 
+## Goal
+
+1. have multiple input queues for the simulation to consume
+
+```go
+for ; ; <-ticker.C {
+	for q := range g.inputqueues {
+		inputs := append(inputs, <-q)
+	}
+	input, open := g.inputQueue.Dequeue()
+	if !open {
+		break
+	}
+
+	for input := range inputs {
+		g.Update(input)
+	}
+
+	g.snapshotQueue <- g.State
+}
+```
+
+2. why do i even need to be notified when a new client connects??
+	 - to make a new queue?
+	 - can i make a single struct do all this?
+
 ## Development
 
 1. [Install ebitengine dependencies][ebitengine_install].

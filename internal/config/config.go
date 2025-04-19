@@ -6,12 +6,15 @@ import (
 	"time"
 
 	"github.com/lmittmann/tint"
+	"github.com/mattn/go-isatty"
 )
 
 func init() {
-	logger := slog.New(tint.NewHandler(os.Stderr, &tint.Options{
+	w := os.Stderr
+	logger := slog.New(tint.NewHandler(w, &tint.Options{
 		Level:      slog.LevelDebug,
-		TimeFormat: time.StampMilli,
+		TimeFormat: time.TimeOnly,
+		NoColor:    !isatty.IsTerminal(w.Fd()),
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			if err, ok := a.Value.Any().(error); ok {
 				aErr := tint.Err(err)
