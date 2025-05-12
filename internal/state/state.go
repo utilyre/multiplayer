@@ -176,22 +176,21 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		)
 		var trans Vec2
 		var dir float64
-		// TODO: spawn perfectly outside of the edge
 		switch rand.N(4) {
 		case top:
 			trans.X = WorldSize * rand.Float64()
-			trans.Y = 10
+			trans.Y = -AsteroidDiam / 2
 			dir = asteroidDirRange*(rand.Float64()-0.5) + 0.5*math.Pi
 		case bottom:
 			trans.X = WorldSize * rand.Float64()
-			trans.Y = WorldSize - 10
+			trans.Y = WorldSize + AsteroidDiam/2
 			dir = asteroidDirRange*(rand.Float64()-0.5) - 0.5*math.Pi
 		case left:
-			trans.X = 10
+			trans.X = -AsteroidDiam / 2
 			trans.Y = WorldSize * rand.Float64()
 			dir = asteroidDirRange * (rand.Float64() - 0.5)
 		case right:
-			trans.X = WorldSize - 10
+			trans.X = WorldSize + AsteroidDiam/2
 			trans.Y = WorldSize * rand.Float64()
 			dir = asteroidDirRange*(rand.Float64()-0.5) - math.Pi
 		}
