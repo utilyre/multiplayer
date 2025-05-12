@@ -10,14 +10,9 @@ import (
 )
 
 const (
-	ScreenWidth  = 1920
-	ScreenHeight = 1080
-
-	PlayerWidth  = 80
-	PlayerHeight = 80
-
-	AsteroidWidth  = 60
-	AsteroidHeight = 60
+	WorldSize    = 2000
+	PlayerDiam   = 80
+	AsteroidDiam = 60
 )
 
 // A zero valued input does not manipulate the state.
@@ -47,8 +42,8 @@ func (s *State) AddPlayer(addr string) {
 	s.Players = append(s.Players, Player{
 		ID: s.nextPlayerID,
 		Trans: Vec2{
-			ScreenWidth * rand.Float64(),
-			ScreenHeight * rand.Float64(),
+			WorldSize * rand.Float64(),
+			WorldSize * rand.Float64(),
 		},
 		Vel:      Vec2{},
 		Accel:    Vec2{},
@@ -128,15 +123,15 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		if player.Trans.X < 0 {
 			player.Trans.X = 0
 			player.Vel.X = 0
-		} else if player.Trans.X > ScreenWidth {
-			player.Trans.X = ScreenWidth
+		} else if player.Trans.X > WorldSize {
+			player.Trans.X = WorldSize
 			player.Vel.X = 0
 		}
 		if player.Trans.Y < 0 {
 			player.Trans.Y = 0
 			player.Vel.Y = 0
-		} else if player.Trans.Y > ScreenHeight {
-			player.Trans.Y = ScreenHeight
+		} else if player.Trans.Y > WorldSize {
+			player.Trans.Y = WorldSize
 			player.Vel.Y = 0
 		}
 		if player.Vel.Magnitude() > playerMaxSpeed {
@@ -164,7 +159,7 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 
 		// bullet disappearance
 		// TODO: remove when perfectly out of world
-		if bullet.Trans.X < 0 || bullet.Trans.X > ScreenWidth || bullet.Trans.Y < 0 || bullet.Trans.Y > ScreenHeight {
+		if bullet.Trans.X < 0 || bullet.Trans.X > WorldSize || bullet.Trans.Y < 0 || bullet.Trans.Y > WorldSize {
 			bulletIndicesToRemove = append(bulletIndicesToRemove, i)
 		}
 	}
@@ -186,20 +181,20 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		// TODO: spawn perfectly at the edge
 		switch rand.N(4) {
 		case top:
-			trans.X = ScreenWidth * rand.Float64()
+			trans.X = WorldSize * rand.Float64()
 			trans.Y = 10
 			dir = asteroidDirRange*(rand.Float64()-0.5) + 0.5*math.Pi
 		case bottom:
-			trans.X = ScreenWidth * rand.Float64()
-			trans.Y = ScreenHeight - 10
+			trans.X = WorldSize * rand.Float64()
+			trans.Y = WorldSize - 10
 			dir = asteroidDirRange*(rand.Float64()-0.5) - 0.5*math.Pi
 		case left:
 			trans.X = 10
-			trans.Y = ScreenHeight * rand.Float64()
+			trans.Y = WorldSize * rand.Float64()
 			dir = asteroidDirRange * (rand.Float64() - 0.5)
 		case right:
-			trans.X = ScreenWidth - 10
-			trans.Y = ScreenHeight * rand.Float64()
+			trans.X = WorldSize - 10
+			trans.Y = WorldSize * rand.Float64()
 			dir = asteroidDirRange*(rand.Float64()-0.5) - math.Pi
 		}
 
@@ -223,7 +218,7 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		asteroid.Rotation = wrapAngle(asteroid.AngVel*dt + asteroid.Rotation)
 
 		// asteroid confinement
-		if asteroid.Trans.X < 0 || asteroid.Trans.X > ScreenWidth || asteroid.Trans.Y < 0 || asteroid.Trans.Y > ScreenHeight {
+		if asteroid.Trans.X < 0 || asteroid.Trans.X > WorldSize || asteroid.Trans.Y < 0 || asteroid.Trans.Y > WorldSize {
 			asteroidIndicesToRemove = append(asteroidIndicesToRemove, i)
 		}
 	}
@@ -237,7 +232,7 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 	asteroidIndicesToRemove = nil
 	for ibullet, bullet := range s.Bullets {
 		for iasteroid, asteroid := range s.Asteroids {
-			if bullet.Trans.Sub(asteroid.Trans).Magnitude() <= AsteroidWidth {
+			if bullet.Trans.Sub(asteroid.Trans).Magnitude() <= AsteroidDiam {
 				bulletIndicesToRemove = append(bulletIndicesToRemove, ibullet)
 				asteroidIndicesToRemove = append(asteroidIndicesToRemove, iasteroid)
 				s.TotalScore += asteroidScore
@@ -261,7 +256,7 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 	asteroidIndicesToRemove = nil
 	for iplayer, player := range s.Players {
 		for iasteroid, asteroid := range s.Asteroids {
-			if player.Trans.Sub(asteroid.Trans).Magnitude() <= AsteroidWidth+PlayerWidth {
+			if player.Trans.Sub(asteroid.Trans).Magnitude() <= AsteroidDiam+PlayerDiam {
 				playerIndicesToRemove = append(playerIndicesToRemove, iplayer)
 				asteroidIndicesToRemove = append(asteroidIndicesToRemove, iasteroid)
 				if s.TotalScore < playerScoreLoss {

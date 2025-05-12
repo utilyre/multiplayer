@@ -51,7 +51,6 @@ func listenAndSimulate(ctx context.Context, addr string) {
 	}()
 
 	ebiten.SetWindowTitle("Asteroids [SERVER]")
-	ebiten.SetWindowSize(640, 360)
 	ebiten.SetTPS(30)
 	err = ebiten.RunGame(sim)
 	if err != nil {
@@ -74,7 +73,6 @@ func connectAndRun(ctx context.Context, raddr string) {
 	}()
 
 	ebiten.SetWindowTitle("Asteroids")
-	ebiten.SetWindowSize(640, 360)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	err = ebiten.RunGame(g)
 	if err != nil {

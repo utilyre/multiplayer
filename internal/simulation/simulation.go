@@ -133,7 +133,7 @@ func (sim *Simulation) Close(ctx context.Context) error {
 }
 
 func (sim *Simulation) Layout(int, int) (int, int) {
-	return state.ScreenWidth, state.ScreenHeight
+	return state.WorldSize, state.WorldSize
 }
 
 func (sim *Simulation) Draw(screen *ebiten.Image) {
@@ -150,8 +150,8 @@ func (sim *Simulation) Draw(screen *ebiten.Image) {
 		m.Translate(-float64(bounds.Dx()/2), -float64(bounds.Dy()/2))
 		m.Rotate(asteroid.Rotation)
 		m.Scale(
-			state.AsteroidWidth/float64(bounds.Dx()),
-			state.AsteroidHeight/float64(bounds.Dy()),
+			state.AsteroidDiam/float64(bounds.Dx()),
+			state.AsteroidDiam/float64(bounds.Dy()),
 		)
 		m.Translate(asteroid.Trans.X, asteroid.Trans.Y)
 		screen.DrawImage(assets.Rock, &ebiten.DrawImageOptions{GeoM: m})
@@ -163,8 +163,8 @@ func (sim *Simulation) Draw(screen *ebiten.Image) {
 		m.Translate(-float64(bounds.Dx()/2), -float64(bounds.Dy()/2))
 		m.Rotate(player.Rotation)
 		m.Scale(
-			state.PlayerWidth/float64(bounds.Dx()),
-			state.PlayerHeight/float64(bounds.Dy()),
+			state.PlayerDiam/float64(bounds.Dx()),
+			state.PlayerDiam/float64(bounds.Dy()),
 		)
 		m.Translate(player.Trans.X, player.Trans.Y)
 		screen.DrawImage(assets.Player, &ebiten.DrawImageOptions{
@@ -172,7 +172,7 @@ func (sim *Simulation) Draw(screen *ebiten.Image) {
 		})
 
 		op := &text.DrawOptions{}
-		op.GeoM.Translate(player.Trans.X-state.PlayerWidth, player.Trans.Y-state.PlayerHeight)
+		op.GeoM.Translate(player.Trans.X-state.PlayerDiam, player.Trans.Y-state.PlayerDiam)
 		text.Draw(screen, fmt.Sprintf("%d", player.ID), &text.GoTextFace{
 			Source: assets.MPlus1pRegular,
 			Size:   50,
