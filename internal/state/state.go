@@ -157,7 +157,6 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		bullet.Trans = HeadVec2(1.5*math.Pi + bullet.Rotation).Mul(bulletSpeed * dt).Add(bullet.Trans)
 
 		// bullet disappearance
-		// TODO: remove when perfectly out of world
 		if bullet.Trans.X < 0 || bullet.Trans.X > WorldSize || bullet.Trans.Y < 0 || bullet.Trans.Y > WorldSize {
 			bulletIndicesToRemove = append(bulletIndicesToRemove, i)
 		}
