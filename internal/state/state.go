@@ -119,19 +119,18 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		player.Vel = player.Accel.Mul(dt).Add(player.Vel)
 
 		// player confinement
-		// TODO: perfectly stop at the edge (including sprite)
-		if player.Trans.X < 0 {
-			player.Trans.X = 0
+		if edge := float64(PlayerDiam / 2); player.Trans.X < edge {
+			player.Trans.X = edge
 			player.Vel.X = 0
-		} else if player.Trans.X > WorldSize {
-			player.Trans.X = WorldSize
+		} else if edge := float64(WorldSize - PlayerDiam/2); player.Trans.X > edge {
+			player.Trans.X = edge
 			player.Vel.X = 0
 		}
-		if player.Trans.Y < 0 {
-			player.Trans.Y = 0
+		if edge := float64(PlayerDiam / 2); player.Trans.Y < edge {
+			player.Trans.Y = edge
 			player.Vel.Y = 0
-		} else if player.Trans.Y > WorldSize {
-			player.Trans.Y = WorldSize
+		} else if edge := float64(WorldSize - PlayerDiam/2); player.Trans.Y > edge {
+			player.Trans.Y = edge
 			player.Vel.Y = 0
 		}
 		if player.Vel.Magnitude() > playerMaxSpeed {
