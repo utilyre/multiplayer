@@ -176,7 +176,7 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		)
 		var trans Vec2
 		var dir float64
-		// TODO: spawn perfectly at the edge
+		// TODO: spawn perfectly outside of the edge
 		switch rand.N(4) {
 		case top:
 			trans.X = WorldSize * rand.Float64()
@@ -215,8 +215,11 @@ func (s *State) Update(delta time.Duration, inputs map[string]Input) {
 		asteroid.Trans = asteroid.Vel.Mul(dt).Add(asteroid.Trans)
 		asteroid.Rotation = wrapAngle(asteroid.AngVel*dt + asteroid.Rotation)
 
-		// asteroid confinement
-		if asteroid.Trans.X < 0 || asteroid.Trans.X > WorldSize || asteroid.Trans.Y < 0 || asteroid.Trans.Y > WorldSize {
+		// asteroid disappearance
+		if asteroid.Trans.X < -AsteroidDiam/2 ||
+			asteroid.Trans.X > WorldSize+AsteroidDiam/2 ||
+			asteroid.Trans.Y < -AsteroidDiam/2 ||
+			asteroid.Trans.Y > WorldSize+AsteroidDiam/2 {
 			asteroidIndicesToRemove = append(asteroidIndicesToRemove, i)
 		}
 	}
@@ -502,6 +505,8 @@ func (i *Input) Decode(r *bytes.Reader) error {
 	i.Space = b&(1<<4) != 0
 	return nil
 }
+
+// TODO: support negative trans values in encoding/decoding
 
 func (s State) Encode(buf *bytes.Buffer) {
 	_ = binary.Write(buf, binary.BigEndian, s.TotalScore)
